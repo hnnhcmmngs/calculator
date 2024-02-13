@@ -18,6 +18,9 @@ for (const numberButton of numberButtons) {
             displayValue = operand2;
             updateDisplay(displayValue);
         }
+        console.log(operand1);
+        console.log(operator);
+        console.log(operand2);
     })
 }
 
@@ -32,23 +35,28 @@ for (const operatorButton of operatorButtons) {
             operand1 = operate(operator, operand1, operand2);
             operator = operatorButton.textContent;
             operand2 = "";
+            displayValue = operand1;
+            updateDisplay(displayValue);
         }
+        console.log(operand1);
+        console.log(operator);
+        console.log(operand2);
     })
 }
 
 function operate(operator, a, b) {
     switch(operator) {
         case "+":
-            return a + b;
+            return +a + +b;
             break;
         case "-":
-            return a - b;
+            return +a - +b;
             break;
         case "*":
-            return a * b;
+            return +a * +b;
             break;
         case "/":
-            return a / b;
+            return +a / +b;
             break;
     }
 }

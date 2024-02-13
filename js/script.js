@@ -31,6 +31,8 @@ for (const operatorButton of operatorButtons) {
         // then the old operator should be replaced with the new operator
         if ((!operator) || (operator && !operand2)) {
             operator = operatorButton.textContent;
+        // there is already a complete expression to be evaluated
+        // it needs to be evalated, stored in operand1, and shown on the display
         } else {
             operand1 = operate(operator, operand1, operand2);
             operator = operatorButton.textContent;
@@ -43,6 +45,24 @@ for (const operatorButton of operatorButtons) {
         console.log(operand2);
     })
 }
+
+const evaluate = document.querySelector("#evaluate");
+evaluate.addEventListener("click", () => {
+    // if there is an operator but no second operand, the second operand is equal to the first operand
+    if (operator && !operand2) {
+        operand1 = operate(operator, operand1, operand1);
+        operator = "";
+        operand2 = "";
+        displayValue = operand1;
+        updateDisplay(displayValue);
+    } else if (operand2) {
+        operand1 = operate(operator, operand1, operand2);
+        operator = "";
+        operand2 = "";
+        displayValue = operand1;
+        updateDisplay(displayValue);
+    }
+})
 
 function operate(operator, a, b) {
     switch(operator) {

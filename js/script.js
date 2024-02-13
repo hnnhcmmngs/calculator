@@ -18,9 +18,6 @@ for (const numberButton of numberButtons) {
             displayValue = operand2;
             updateDisplay(displayValue);
         }
-        console.log(operand1);
-        console.log(operator);
-        console.log(operand2);
     })
 }
 
@@ -40,9 +37,6 @@ for (const operatorButton of operatorButtons) {
             displayValue = operand1;
             updateDisplay(displayValue);
         }
-        console.log(operand1);
-        console.log(operator);
-        console.log(operand2);
     })
 }
 
@@ -62,6 +56,16 @@ evaluate.addEventListener("click", () => {
         displayValue = operand1;
         updateDisplay(displayValue);
     }
+})
+
+const allClear = document.querySelector("#allclear");
+allClear.addEventListener("click", () => {
+    operand1 = "";
+    operator = "";
+    operand2 = "";
+
+    displayValue = "";
+    updateDisplay(displayValue);
 })
 
 function operate(operator, a, b) {

@@ -10,14 +10,17 @@ const numberButtons = document.querySelectorAll(".number");
 for (const numberButton of numberButtons) {
     numberButton.addEventListener("click", () => {
         if (!operator) {
-            operand1 += numberButton.textContent;
-            displayValue = operand1;
-            updateDisplay(displayValue);
+            if (operand1.length < 10) {
+                operand1 += numberButton.textContent;
+                displayValue = operand1;
+            }  
         } else {
-            operand2 += numberButton.textContent;
-            displayValue = operand2;
-            updateDisplay(displayValue);
+            if (operand2.length < 10) {
+                operand2 += numberButton.textContent;
+                displayValue = operand2;
+            }
         }
+        updateDisplay(displayValue);
     })
 }
 

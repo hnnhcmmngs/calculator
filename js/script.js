@@ -32,9 +32,15 @@ for (const operatorButton of operatorButtons) {
         // it needs to be evalated, stored in operand1, and shown on the display
         } else {
             operand1 = operate(operator, operand1, operand2);
-            operator = operatorButton.textContent;
+            if (operand1 !== "") {
+                operator = operatorButton.textContent;
+                displayValue = operand1;
+            } else {
+                // tried to divide by zero, need to display ERROR message
+                operator = "";
+                displayValue = "ERROR";
+            }
             operand2 = "";
-            displayValue = operand1;
             updateDisplay(displayValue);
         }
     })
@@ -47,13 +53,23 @@ evaluate.addEventListener("click", () => {
         operand1 = operate(operator, operand1, operand1);
         operator = "";
         operand2 = "";
-        displayValue = operand1;
+        if (operand1 !== "") {
+            displayValue = operand1;
+        } else {
+            // tried to divide by zero
+            displayValue = "ERROR";
+        }
         updateDisplay(displayValue);
     } else if (operand2) {
         operand1 = operate(operator, operand1, operand2);
         operator = "";
         operand2 = "";
-        displayValue = operand1;
+        if (operand1 !== "") {
+            displayValue = operand1;
+        } else {
+            // tried to divide by zero
+            displayValue = "ERROR";
+        }
         updateDisplay(displayValue);
     }
 })
@@ -71,16 +87,20 @@ allClear.addEventListener("click", () => {
 function operate(operator, a, b) {
     switch(operator) {
         case "+":
-            return +a + +b;
+            return String(+a + +b);
             break;
         case "-":
-            return +a - +b;
+            return String(+a - +b);
             break;
         case "*":
-            return +a * +b;
+            return String(+a * +b);
             break;
         case "/":
-            return +a / +b;
+            // should prevent division by zero
+            if (b === "0") {
+                return ""
+            }
+            return String(+a / +b);
             break;
     }
 }

@@ -1,4 +1,4 @@
-let operand1 = "5";
+let operand1 = "";
 let operator = "";
 let operand2 = "";
 
@@ -11,8 +11,12 @@ for (const numberButton of numberButtons) {
     numberButton.addEventListener("click", () => {
         if (!operator) {
             operand1 += numberButton.textContent;
+            displayValue = operand1;
+            updateDisplay(displayValue);
         } else {
             operand2 += numberButton.textContent;
+            displayValue = operand2;
+            updateDisplay(displayValue);
         }
     })
 }
@@ -49,12 +53,6 @@ function operate(operator, a, b) {
     }
 }
 
-function updateDisplay(number, append) {
-    // the number may either need to be updated or replaced with a new number
-    // the append argument accounts for this
-    if (append === true) {
-        display.textContent += number;
-    } else {
-        display.textContent = number;
-    }
+function updateDisplay(number) {
+    display.textContent = number;
 }

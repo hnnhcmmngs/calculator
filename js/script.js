@@ -27,21 +27,25 @@ for (const numberButton of numberButtons) {
 const operatorButtons = document.querySelectorAll(".operator");
 for (const operatorButton of operatorButtons) {
     operatorButton.addEventListener("click", () => {
+        // if an expression was previoulsy evaluated, the result of that expression can be used in a new expression
+        if (!operand1 && displayValue) {
+            operand1 = displayValue;
+            operator = operatorButton.textContent;
         // if another operator was previously selected and a new one is immediately selected
         // then the old operator should be replaced with the new operator
-        if ((!operator) || (operator && !operand2)) {
+        } else if ((!operator) || (operator && !operand2)) {
             operator = operatorButton.textContent;
         // there is already a complete expression to be evaluated
         // it needs to be evalated, stored in operand1, and shown on the display
         } else {
-            operand1 = operate(operator, operand1, operand2);
-            if (operand1 !== "") {
+            displayValue = operate(operator, operand1, operand2);
+            if (displayValue !== "ERROR") {
+                operand1 = displayValue;
                 operator = operatorButton.textContent;
-                displayValue = operand1;
             } else {
-                // tried to divide by zero, need to display ERROR message
+                // tried to divide by zero
+                operand1 = "";
                 operator = "";
-                displayValue = "ERROR";
             }
             operand2 = "";
             updateDisplay(displayValue);
@@ -51,28 +55,16 @@ for (const operatorButton of operatorButtons) {
 
 const evaluate = document.querySelector("#evaluate");
 evaluate.addEventListener("click", () => {
-    // if there is an operator but no second operand, the second operand is equal to the first operand
-    if (operator && !operand2) {
-        operand1 = operate(operator, operand1, operand1);
+    if (operator) {
+        // if there is an operator but no second operand, the second operand is equal to the first operand
+        if (!operand2) {
+            displayValue = operate(operator, operand1, operand1);
+        } else if (operand2) {
+            displayValue = operate(operator, operand1, operand2);
+        }
+        operand1 = "";
         operator = "";
         operand2 = "";
-        if (operand1 !== "") {
-            displayValue = operand1;
-        } else {
-            // tried to divide by zero
-            displayValue = "ERROR";
-        }
-        updateDisplay(displayValue);
-    } else if (operand2) {
-        operand1 = operate(operator, operand1, operand2);
-        operator = "";
-        operand2 = "";
-        if (operand1 !== "") {
-            displayValue = operand1;
-        } else {
-            // tried to divide by zero
-            displayValue = "ERROR";
-        }
         updateDisplay(displayValue);
     }
 })
@@ -101,7 +93,7 @@ function operate(operator, a, b) {
         case "/":
             // should prevent division by zero
             if (b === "0") {
-                return ""
+                return "ERROR"
             }
             return String(+a / +b);
             break;

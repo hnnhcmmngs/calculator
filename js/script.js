@@ -1,4 +1,4 @@
-let operand1 = "";
+let operand1 = "5";
 let operator = "";
 let operand2 = "";
 
@@ -13,6 +13,21 @@ for (const numberButton of numberButtons) {
             operand1 += numberButton.textContent;
         } else {
             operand2 += numberButton.textContent;
+        }
+    })
+}
+
+const operatorButtons = document.querySelectorAll(".operator");
+for (const operatorButton of operatorButtons) {
+    operatorButton.addEventListener("click", () => {
+        // if another operator was previously selected and a new one is immediately selected
+        // then the old operator should be replaced with the new operator
+        if ((!operator) || (operator && !operand2)) {
+            operator = operatorButton.textContent;
+        } else {
+            operand1 = operate(operator, operand1, operand2);
+            operator = operatorButton.textContent;
+            operand2 = "";
         }
     })
 }

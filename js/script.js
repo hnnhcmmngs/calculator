@@ -3,8 +3,8 @@ let operator = "";
 let operand2 = "";
 
 let displayValue = "";
-
 const display = document.querySelector("#display");
+updateDisplay(displayValue);
 
 const numberButtons = document.querySelectorAll(".number");
 for (const numberButton of numberButtons) {
@@ -93,11 +93,17 @@ decimal.addEventListener("click", () => {
     if (operator === "") {
         // do not add decimal to current number if current number already has decimal
         if (operand1.length < 9 && !operand1.includes(".")) { 
+            if (operand1 === "") {
+                operand1 += "0";
+            }
             operand1 += ".";
             displayValue = operand1;
         }  
     } else {
         if (operand2.length < 9 && !operand2.includes(".")) {
+            if (operand2 === "") {
+                operand2 += "0";
+            }
             operand2 += ".";
             displayValue = operand2;
         }
@@ -159,7 +165,10 @@ function operate(operator, a, b) {
 }
 
 function updateDisplay(number) {
-    if (number.length > 9) {
+    if (number === "") {
+        display.textContent = "0";
+    }
+    else if (number.length > 9) {
         // convert large integer to exponential form or else it will overflow on the display
         // convert very small decimal to exponential form or else it will overflow on the display
         if (!number.includes(".") || Math.abs(+number) < 0.0000001) {

@@ -10,12 +10,12 @@ const numberButtons = document.querySelectorAll(".number");
 for (const numberButton of numberButtons) {
     numberButton.addEventListener("click", () => {
         if (operator === "") {
-            if (operand1.length < 10) {
+            if (operand1.length < 9) {
                 operand1 += numberButton.textContent;
                 displayValue = operand1;
             }  
         } else {
-            if (operand2.length < 10) {
+            if (operand2.length < 9) {
                 operand2 += numberButton.textContent;
                 displayValue = operand2;
             }
@@ -92,12 +92,12 @@ const decimal = document.querySelector("#decimal");
 decimal.addEventListener("click", () => {
     if (operator === "") {
         // do not add decimal to current number if current number already has decimal
-        if (operand1.length < 10 && !operand1.includes(".")) { 
+        if (operand1.length < 9 && !operand1.includes(".")) { 
             operand1 += ".";
             displayValue = operand1;
         }  
     } else {
-        if (operand2.length < 10 && !operand2.includes(".")) {
+        if (operand2.length < 9 && !operand2.includes(".")) {
             operand2 += ".";
             displayValue = operand2;
         }
@@ -127,5 +127,22 @@ function operate(operator, a, b) {
 }
 
 function updateDisplay(number) {
-    display.textContent = number;
+    if (number.length > 9) {
+        // convert large integer to exponential form or else it will overflow on the display
+        // convert very small decimal to exponential form or else it will overflow on the display
+        if (!number.includes(".") || Math.abs(+number) < 0.0000001) {
+            display.textContent = Number.parseFloat(number).toExponential(4);
+        } else {
+            numComps = number.split(".");
+            // the integer portion of the number is too long, must be shown in exponential form rounded
+            if (numComps[0].length > 9) {
+                display.textContent = Number.parseFloat(number).toExponential(4);
+            // fractional portion of number is too long, need to round
+            } else {
+                display.textContent = Number.parseFloat(number).toFixed(Math.max(0, 9 - (numComps[0].length + 1)));
+            }
+        }
+    } else {
+        display.textContent = number;
+    }
 }

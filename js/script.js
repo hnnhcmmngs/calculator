@@ -9,7 +9,10 @@ updateDisplay(displayValue);
 const numberButtons = document.querySelectorAll(".number");
 for (const numberButton of numberButtons) {
     numberButton.addEventListener("click", () => {
-        if (operator === "") {
+        // prevent leading 0s from being added to number
+        if (numberButton.textContent === "0" && +displayValue === 0 && !displayValue.includes(".")) {
+            displayValue = "0";
+        } else if (operator === "") {
             if (operand1.length < 9) {
                 operand1 += numberButton.textContent;
                 displayValue = operand1;
@@ -113,34 +116,36 @@ decimal.addEventListener("click", () => {
 
 const sign = document.querySelector("#sign");
 sign.addEventListener("click", () => {
-    if (operand1 !== "") {
-        if (operator === "") {
-            // number is already negative, remove negative sign
-            if (operand1[0] === "-") {
-                operand1 = operand1.slice(1);
-            // string is positive, add negative sign
+    if (+displayValue !== 0) {
+        if (operand1 !== "") {
+            if (operator === "") {
+                // number is already negative, remove negative sign
+                if (operand1[0] === "-") {
+                    operand1 = operand1.slice(1);
+                // string is positive, add negative sign
+                } else {
+                    operand1 = "-" + operand1;
+                }
+                displayValue = operand1;
+            } else if (operand2 !== "") {
+                if (operand2[0] === "-") {
+                    operand2 = operand2.slice(1);
+                } else {
+                    operand2 = "-" + operand2;
+                }
+                displayValue = operand2;
+            }
+        // negate result from previous expression
+        } else if (displayValue !== "") {
+            if (displayValue[0] === "-") {
+                operand1 = displayValue.slice(1);
             } else {
-                operand1 = "-" + operand1;
+                operand1 = "-" + displayValue;
             }
             displayValue = operand1;
-        } else if (operand2 !== "") {
-            if (operand2[0] === "-") {
-                operand2 = operand2.slice(1);
-            } else {
-                operand2 = "-" + operand2;
-            }
-            displayValue = operand2;
         }
-    // negate result from previous expression
-    } else if (displayValue !== "") {
-        if (displayValue[0] === "-") {
-            operand1 = displayValue.slice(1);
-        } else {
-            operand1 = "-" + displayValue;
-        }
-        displayValue = operand1;
+        updateDisplay(displayValue);
     }
-    updateDisplay(displayValue);
 })
 
 function operate(operator, a, b) {

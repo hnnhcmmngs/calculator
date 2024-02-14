@@ -62,7 +62,6 @@ for (const operatorButton of operatorButtons) {
 const evaluate = document.querySelector("#evaluate");
 evaluate.addEventListener("click", () => {
     if (operator !== "") {
-        console.log("here");
         // if there is an operator but no second operand, the second operand is equal to the first operand
         if (operand2 === "") {
             displayValue = operate(operator, operand1, operand1);
@@ -86,6 +85,23 @@ allClear.addEventListener("click", () => {
     operand2 = "";
 
     displayValue = "";
+    updateDisplay(displayValue);
+})
+
+const decimal = document.querySelector("#decimal");
+decimal.addEventListener("click", () => {
+    if (operator === "") {
+        // do not add decimal to current number if current number already has decimal
+        if (operand1.length < 10 && !operand1.includes(".")) { 
+            operand1 += ".";
+            displayValue = operand1;
+        }  
+    } else {
+        if (operand2.length < 10 && !operand2.includes(".")) {
+            operand2 += ".";
+            displayValue = operand2;
+        }
+    }
     updateDisplay(displayValue);
 })
 

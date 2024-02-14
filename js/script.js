@@ -9,7 +9,7 @@ const display = document.querySelector("#display");
 const numberButtons = document.querySelectorAll(".number");
 for (const numberButton of numberButtons) {
     numberButton.addEventListener("click", () => {
-        if (!operator) {
+        if (operator === "") {
             if (operand1.length < 10) {
                 operand1 += numberButton.textContent;
                 displayValue = operand1;
@@ -28,44 +28,54 @@ const operatorButtons = document.querySelectorAll(".operator");
 for (const operatorButton of operatorButtons) {
     operatorButton.addEventListener("click", () => {
         // if an expression was previoulsy evaluated, the result of that expression can be used in a new expression
-        if (!operand1 && displayValue) {
+        if (operand1 === "" && displayValue !== "") {
             operand1 = displayValue;
             operator = operatorButton.textContent;
-        // if another operator was previously selected and a new one is immediately selected
-        // then the old operator should be replaced with the new operator
-        } else if ((!operator) || (operator && !operand2)) {
-            operator = operatorButton.textContent;
-        // there is already a complete expression to be evaluated
-        // it needs to be evalated, stored in operand1, and shown on the display
-        } else {
-            displayValue = operate(operator, operand1, operand2);
-            if (displayValue !== "ERROR") {
-                operand1 = displayValue;
+        } 
+        if (operand1 !== "") {
+            // if another operator was previously selected and a new one is immediately selected
+            // then the old operator should be replaced with the new operator
+            if (operator === "" || (operator !== "" && operand2 === "")) {
                 operator = operatorButton.textContent;
+            // there is already a complete expression to be evaluated
+            // it needs to be evalated, stored in operand1, and shown on the display
             } else {
-                // tried to divide by zero
-                operand1 = "";
-                operator = "";
+                displayValue = operate(operator, operand1, operand2);
+                if (displayValue !== "ERROR") {
+                    operand1 = displayValue;
+                    operator = operatorButton.textContent;
+                    operand2 = "";
+                    updateDisplay(displayValue);
+                } else {
+                    // tried to divide by zero
+                    operand1 = "";
+                    operator = "";
+                    operand2 = "";
+                    updateDisplay(displayValue);
+                    displayValue = "";
+                }
             }
-            operand2 = "";
-            updateDisplay(displayValue);
         }
     })
 }
 
 const evaluate = document.querySelector("#evaluate");
 evaluate.addEventListener("click", () => {
-    if (operator) {
+    if (operator !== "") {
+        console.log("here");
         // if there is an operator but no second operand, the second operand is equal to the first operand
-        if (!operand2) {
+        if (operand2 === "") {
             displayValue = operate(operator, operand1, operand1);
-        } else if (operand2) {
+        } else if (operand2 !== "") {
             displayValue = operate(operator, operand1, operand2);
         }
         operand1 = "";
         operator = "";
         operand2 = "";
         updateDisplay(displayValue);
+        if (displayValue === "ERROR") {
+            displayValue = "";
+        }
     }
 })
 

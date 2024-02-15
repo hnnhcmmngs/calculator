@@ -13,12 +13,12 @@ for (const numberButton of numberButtons) {
         if (numberButton.textContent === "0" && +displayValue === 0 && !displayValue.includes(".")) {
             displayValue = "0";
         } else if (operator === "") {
-            if (operand1.length < 9) {
+            if ((!operand1.includes("-") && operand1.length < 9) || (operand1.includes("-") && operand1.length < 10)) {
                 operand1 += numberButton.textContent;
                 displayValue = operand1;
             }  
         } else {
-            if (operand2.length < 9) {
+            if ((!operand2.includes("-") && operand2.length < 9) || (operand2.includes("-") && operand2.length < 10)) {
                 operand2 += numberButton.textContent;
                 displayValue = operand2;
             }
@@ -95,7 +95,8 @@ const decimal = document.querySelector("#decimal");
 decimal.addEventListener("click", () => {
     if (operator === "") {
         // do not add decimal to current number if current number already has decimal
-        if (operand1.length < 9 && !operand1.includes(".")) { 
+        // or if current number is too long already
+        if (((!operand1.includes("-") && operand1.length < 9) || (operand1.includes("-") && operand1.length < 10)) && !operand1.includes(".")) { 
             if (operand1 === "") {
                 operand1 += "0";
             }
@@ -103,7 +104,7 @@ decimal.addEventListener("click", () => {
             displayValue = operand1;
         }  
     } else {
-        if (operand2.length < 9 && !operand2.includes(".")) {
+        if (((!operand2.includes("-") && operand2.length < 9) || (operand2.includes("-") && operand2.length < 10)) && !operand2.includes(".")) {
             if (operand2 === "") {
                 operand2 += "0";
             }
@@ -116,6 +117,7 @@ decimal.addEventListener("click", () => {
 
 const sign = document.querySelector("#sign");
 sign.addEventListener("click", () => {
+    // do not apply sign to value of 0
     if (+displayValue !== 0) {
         if (operand1 !== "") {
             if (operator === "") {
@@ -148,6 +150,31 @@ sign.addEventListener("click", () => {
     }
 })
 
+const percent = document.querySelector("#percent");
+percent.addEventListener("click", () => {
+    if (operand1 !== "") {
+        if (operator === "") {
+            operand1 = String(operand1 / 100);
+            displayValue = operand1;
+        // if only one operand and an operator, apply the percentage to the operand and multiply by operand
+        // store this value in second operand
+        // e.g if 9 + % is typed, then the second operand is 9 * 0.09 = 0.81 and the new expression is 9 + 0.81
+        } else if (operator !== "" && operand2 === "") {
+            operand2 = String(operand1 * (operand1 / 100));
+            displayValue = operand2;
+        } else {
+            operand2 = String(operand2 / 100);
+            displayValue = operand2;
+        }
+        updateDisplay(displayValue);
+    // percent of result from previous expression
+    } else if (displayValue !== "") {
+        operand1 = String(displayValue / 100);
+        displayValue = operand1;
+        updateDisplay(displayValue);
+    }
+})
+
 function operate(operator, a, b) {
     switch(operator) {
         case "+":
@@ -170,24 +197,34 @@ function operate(operator, a, b) {
 }
 
 function updateDisplay(number) {
+    let negative = false;
+    let toDisplay;
+    number = String(number);
     if (number === "") {
         display.textContent = "0";
-    }
-    else if (number.length > 9) {
+    } else if ((!number.includes("-") && number.length > 9) || (number.includes("-") && number.length > 10)) {
+        if (number[0] === "-") {
+            number = number.slice(1);
+            negative = true;
+        }
         // convert large integer to exponential form or else it will overflow on the display
         // convert very small decimal to exponential form or else it will overflow on the display
-        if (!number.includes(".") || Math.abs(+number) < 0.0000001) {
-            display.textContent = Number.parseFloat(number).toExponential(4);
+        if (Math.abs(+number) >= 1000000000 || Math.abs(+number) < 0.0000001) {
+            toDisplay = Number.parseFloat(number).toExponential(4);
+            let n = 3;
+            while (toDisplay.length > 9 && n > 0) {
+                toDisplay = Number.parseFloat(number).toExponential(n);
+                n--;
+            }
+        // round the fractional part to fit within 9 digits
         } else {
             numComps = number.split(".");
-            // the integer portion of the number is too long, must be shown in exponential form rounded
-            if (numComps[0].length > 9) {
-                display.textContent = Number.parseFloat(number).toExponential(4);
-            // fractional portion of number is too long, need to round
-            } else {
-                display.textContent = Number.parseFloat(number).toFixed(Math.max(0, 9 - (numComps[0].length + 1)));
-            }
+            toDisplay = Number.parseFloat(number).toFixed(Math.max(0, 9 - (numComps[0].length + 1)));
         }
+        if (negative) {
+            toDisplay = "-" + toDisplay;
+        }
+        display.textContent = toDisplay;
     } else {
         display.textContent = number;
     }

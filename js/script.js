@@ -58,6 +58,10 @@ for (const operatorButton of operatorButtons) {
                     displayValue = "";
                 }
             }
+        } else if (display.textContent !== "ERROR") {
+            operand1 = "0";
+            operator = operatorButton.textContent;
+            updateDisplay(displayValue);
         }
     })
 }

@@ -6,11 +6,16 @@ let displayValue = "";
 const display = document.querySelector("#display");
 updateDisplay(displayValue);
 
+const operatorButtons = document.querySelectorAll(".operator");
+
 const numberButtons = document.querySelectorAll(".number");
 for (const numberButton of numberButtons) {
     numberButton.addEventListener("click", () => {
+        for (const operatorButton of operatorButtons) {
+            operatorButton.style.backgroundColor = "cornflowerblue";
+        }
         // prevent leading 0s from being added to number
-        if (numberButton.textContent === "0" && +displayValue === 0 && !displayValue.includes(".")) {
+        if (numberButton.textContent === "0" && !displayValue.includes(".")) {
             displayValue = "0";
         } else if (operator === "") {
             if ((!operand1.includes("-") && operand1.length < 9) || (operand1.includes("-") && operand1.length < 10)) {
@@ -27,13 +32,17 @@ for (const numberButton of numberButtons) {
     })
 }
 
-const operatorButtons = document.querySelectorAll(".operator");
 for (const operatorButton of operatorButtons) {
     operatorButton.addEventListener("click", () => {
+        // clear previous operator clicked if applicable
+        for (const operatorButton of operatorButtons) {
+            operatorButton.style.backgroundColor = "cornflowerblue";
+        }
         // if an expression was previoulsy evaluated, the result of that expression can be used in a new expression
         if (operand1 === "" && displayValue !== "") {
             operand1 = displayValue;
             operator = operatorButton.textContent;
+            operatorButton.style.backgroundColor = "rgb(237, 157, 100)";
         } 
         if (operand1 !== "") {
             // if another operator was previously selected and a new one is immediately selected
@@ -58,16 +67,27 @@ for (const operatorButton of operatorButtons) {
                     displayValue = "";
                 }
             }
+            operatorButton.style.backgroundColor = "rgb(237, 157, 100)";
+        // can use default display 0 in expressions
         } else if (display.textContent !== "ERROR") {
             operand1 = "0";
             operator = operatorButton.textContent;
             updateDisplay(displayValue);
+            operatorButton.style.backgroundColor = "rgb(237, 157, 100)";
+        } else {
+            // ERROR was displayed so the operator clicked should not be orange
+            for (const operatorButton of operatorButtons) {
+                operatorButton.style.backgroundColor = "cornflowerblue";
+            }
         }
     })
 }
 
 const evaluate = document.querySelector("#evaluate");
 evaluate.addEventListener("click", () => {
+    for (const operatorButton of operatorButtons) {
+        operatorButton.style.backgroundColor = "cornflowerblue";
+    }
     if (operator !== "") {
         // if there is an operator but no second operand, the second operand is equal to the first operand
         if (operand2 === "") {
@@ -87,6 +107,9 @@ evaluate.addEventListener("click", () => {
 
 const allClear = document.querySelector("#allclear");
 allClear.addEventListener("click", () => {
+    for (const operatorButton of operatorButtons) {
+        operatorButton.style.backgroundColor = "cornflowerblue";
+    }
     operand1 = "";
     operator = "";
     operand2 = "";
@@ -97,6 +120,9 @@ allClear.addEventListener("click", () => {
 
 const decimal = document.querySelector("#decimal");
 decimal.addEventListener("click", () => {
+    for (const operatorButton of operatorButtons) {
+        operatorButton.style.backgroundColor = "cornflowerblue";
+    }
     if (operator === "") {
         // do not add decimal to current number if current number already has decimal
         // or if current number is too long already
@@ -156,6 +182,9 @@ sign.addEventListener("click", () => {
 
 const percent = document.querySelector("#percent");
 percent.addEventListener("click", () => {
+    for (const operatorButton of operatorButtons) {
+        operatorButton.style.backgroundColor = "cornflowerblue";
+    }
     if (operand1 !== "") {
         if (operator === "") {
             operand1 = String(operand1 / 100);
